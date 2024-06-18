@@ -25,25 +25,21 @@ export async function addTodo(data: FormData): Promise<void> {
 }
 
 export async function getTodos(): Promise<Todo[]> {
-    try {
-        const c = cookies()
-        
-        const res = await fetch("http://localhost:3000/api/todos", {
-            method: "GET",
-            headers: {
-                Cookie: c.toString(),
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            next: { tags: ["todos"] }
-        })
-        if (!res.ok) throw new Error('Failed to fetch todos');
-        const { data } = await res.json()
-        return data
-    } catch (error) {
-        console.error("Failed to get todos:", error);
-        return [];
-    }
+    const c = cookies()
+
+    const res = await fetch("http://localhost:3000/api/todos", {
+        method: "GET",
+        headers: {
+            Cookie: c.toString(),
+            "Content-Type": "application/json"
+        },
+        credentials: "include",
+        next: { tags: ["todos"] }
+    })
+    if (!res.ok) return [];
+
+    const { data } = await res.json()
+    return data
 }
 
 export async function deleteTodo(id: string): Promise<void> {

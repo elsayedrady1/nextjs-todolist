@@ -17,13 +17,15 @@ export default async function _middleware(request: NextRequest) {
             "Content-Type": "application/json"
         }
     })
-    const { data } = await res.json();
 
-    const response = NextResponse.next();
+    const data = await res.json();
+    console.log(data)
 
-    if (oldSessionId !== data.id)
-        response.cookies.set("sessionId", data.id);
+    // const response = NextResponse.next();
+
+    // if (oldSessionId !== data?.id)
+    //     response.cookies.set("sessionId", data.id);
 
 
-    return response;
+    // return response;
 }
