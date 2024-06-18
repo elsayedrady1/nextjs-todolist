@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { ProgressBar } from "@/components/ProgressBar";
+import { Navbar } from "@/components/Navbar";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -19,7 +21,13 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={poppins.className}>{children}</body>
+      <body className={poppins.className}>
+        <Navbar />
+        <ProgressBar />
+        <main className="w-screen h-screen flex justify-center px-10">
+          {children}
+        </main>
+      </body>
     </html>
   );
 }
