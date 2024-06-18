@@ -1,14 +1,7 @@
-"use server";
+import React from "react";
 
-import Todos from "@/components/Todos";
-import { getTodos } from "./actions";
+const page = () => {
+  return <div>page</div>;
+};
 
-export default async function Home() {
-  const todos = await getTodos();
-
-  return (
-    <main className="flex justify-center items-center h-screen w-screen">
-      <Todos todos={todos} />
-    </main>
-  );
-}
+export default page;

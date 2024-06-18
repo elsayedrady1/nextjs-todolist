@@ -1,6 +1,6 @@
 "use client";
 
-import { addTodo, deleteAll } from "@/app/actions";
+import { addTodo, deleteAll } from "@/app/todos/actions";
 import { Todo } from "@prisma/client";
 import {
   ComponentPropsWithRef,
@@ -51,14 +51,14 @@ const Todos = ({ todos }: { todos: Todo[] }) => {
       <Button
         variant="destructive"
         onClick={() => setOpened(true)}
-        disabled={todos.length === 0}
+        disabled={todos?.length === 0}
       >
         Delete All
       </Button>
 
       <ul className="flex flex-col gap-1 max-h-56 overflow-y-auto">
-        {todos.length > 0 ? (
-          todos.map((todo, i) => <TodoComponent key={i} {...todo} />)
+        {todos?.length > 0 ? (
+          todos?.map((todo, i) => <TodoComponent key={i} {...todo} />)
         ) : (
           <span className="p-3.5 rounded-md border-black border border-opacity-10 w-full flex justify-center items-center">
             There is no todos at this time

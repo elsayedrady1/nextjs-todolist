@@ -8,7 +8,7 @@ import React, {
   useState,
   useTransition,
 } from "react";
-import { deleteTodo, updateTodo } from "@/app/actions";
+import { deleteTodo, updateTodo } from "@/app/todos/actions";
 import { Button } from "./ui/button";
 import { Todo as ITodo } from "@prisma/client";
 import { Checkbox } from "./ui/checkbox";
