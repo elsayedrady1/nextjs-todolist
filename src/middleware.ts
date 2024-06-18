@@ -6,7 +6,7 @@ export const config = {
     matcher: ["/todos"],
 };
 
-export default async function _middleware(request: NextRequest) {
+export default async function middleware(request: NextRequest) {
     const c = cookies();
     const oldSessionId = c.get("sessionId")
     const res = await fetch("http://localhost:3000/api/auth", {
@@ -21,7 +21,7 @@ export default async function _middleware(request: NextRequest) {
     const { data } = await res.json();
 
     const response = NextResponse.next();
-    console.log(oldSessionId?.value, data.id)
+
     if (oldSessionId !== data?.id)
         response.cookies.set("sessionId", data.id);
 
