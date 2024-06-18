@@ -17,7 +17,7 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.10",
     "lucide-react": "^0.394.0",
-    "next": "14.2.4",
+    "next": "^15.0.0-canary.36",
     "next13-progressbar": "^1.2.1",
     "prisma": "^5.15.0",
     "react": "^18",
