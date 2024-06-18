@@ -19,6 +19,7 @@ import { Input } from "./ui/input";
 import { useOnClickOutside } from "@/hooks/utils/useOnClickOutside";
 import { Modal } from "./Modal";
 const Todo = ({ name, id, updatedAt, checked }: ITodo) => {
+  const date = new Date(updatedAt);
   const [deletePending, startDeleting] = useTransition();
   const ref = useRef(null);
   useOnClickOutside([ref], () => {
@@ -38,7 +39,7 @@ const Todo = ({ name, id, updatedAt, checked }: ITodo) => {
 
         <div className="flex flex-col gap-1 text-sm w-full">
           <span className="text-start max-w-[90%] break-words">{name}</span>
-          <span>{updatedAt.toLocaleString()}</span>
+          <span>{date.toLocaleString()}</span>
         </div>
       </div>
       <div className="flex justify-center items-center gap-2">

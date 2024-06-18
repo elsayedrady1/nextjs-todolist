@@ -10,6 +10,7 @@ export async function addTodo(data: FormData): Promise<void> {
         const c = cookies()
         await fetch("http://localhost:3000/api/todos", {
             method: "POST",
+            signal: AbortSignal.timeout(8000),
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"
@@ -47,6 +48,7 @@ export async function deleteTodo(id: string): Promise<void> {
         const c = cookies()
         const res = await fetch(`http://localhost:3000/api/todos/${id}`, {
             method: "DELETE",
+            signal: AbortSignal.timeout(8000),
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"
@@ -66,6 +68,7 @@ export async function deleteAll(): Promise<void> {
         const c = cookies()
         const res = await fetch(`http://localhost:3000/api/todos/`, {
             method: "DELETE",
+            signal: AbortSignal.timeout(8000),
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"
@@ -85,6 +88,7 @@ export async function updateTodo(id: string, payload: Prisma.TodoUpdateInput): P
         const c = cookies()
         const res = await fetch(`http://localhost:3000/api/todos/${id}`, {
             method: "PATCH",
+            signal: AbortSignal.timeout(8000),
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"

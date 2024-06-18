@@ -18,14 +18,13 @@ export default async function _middleware(request: NextRequest) {
         }
     })
 
-    const data = await res.json();
-    console.log(data)
+    const { data } = await res.json();
 
-    // const response = NextResponse.next();
+    const response = NextResponse.next();
+    console.log(oldSessionId?.value, data.id)
+    if (oldSessionId !== data?.id)
+        response.cookies.set("sessionId", data.id);
 
-    // if (oldSessionId !== data?.id)
-    //     response.cookies.set("sessionId", data.id);
 
-
-    // return response;
+    return response;
 }
