@@ -37,8 +37,8 @@ const Todo = ({ name, id, updatedAt, checked }: ITodo) => {
           }}
         />
 
-        <div className="flex flex-col gap-1 text-sm w-full">
-          <span className="text-start max-w-[90%] break-words">{name}</span>
+        <div className="flex flex-col gap-1 text-sm md:!max-w-[30vw] !max-w-[20vw]">
+          <span className="text-start break-words">{name}</span>
           <span>{date.toLocaleString()}</span>
         </div>
       </div>

@@ -3,14 +3,24 @@
 import { Todo, Prisma } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
+export type Callback =
+    ({
+        status: "success";
+        message: string;
+        data?: Todo
+    }) |
+    ({
+        status: "failed";
+        message: string;
 
-export async function addTodo(data: FormData): Promise<void> {
+    })
+
+export async function addTodo(data: FormData): Promise<Callback> {
     try {
         const todo = data.get("todo")
         const c = cookies()
-        await fetch("http://localhost:3000/api/todos", {
+        const res = await fetch("http://localhost:3000/api/todos", {
             method: "POST",
-            signal: AbortSignal.timeout(8000),
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"
@@ -18,10 +28,13 @@ export async function addTodo(data: FormData): Promise<void> {
             credentials: "include",
             body: JSON.stringify({ todo })
         })
+        if (!res.ok) return { status: "failed", message: "Failed to add todo!" }
+
         revalidateTag('todos')
+
+        return { status: "success", message: "Todo has been added successfully!" }
     } catch (error) {
-        console.error("Failed to add todo:", error);
-        throw error;
+        return { status: "failed", message: "Failed to add todo!" }
     }
 }
 
@@ -43,52 +56,50 @@ export async function getTodos(): Promise<Todo[]> {
     return data
 }
 
-export async function deleteTodo(id: string): Promise<void> {
+export async function deleteTodo(id: string): Promise<Callback> {
     try {
         const c = cookies()
         const res = await fetch(`http://localhost:3000/api/todos/${id}`, {
             method: "DELETE",
-            signal: AbortSignal.timeout(8000),
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"
             },
             credentials: "include",
         })
-        if (!res.ok) throw new Error('Failed to delete todo');
+        if (!res.ok) return { status: "failed", message: "Failed to delete todo!" }
         revalidateTag('todos')
+        return { status: "success", message: "Todo has been deleted successfully!" }
     } catch (error) {
-        console.error("Failed to delete todo:", error);
-        throw error;
+        return { status: "failed", message: "Failed to delete todo!" }
     }
 }
 
-export async function deleteAll(): Promise<void> {
+export async function deleteAll(): Promise<Callback> {
     try {
         const c = cookies()
         const res = await fetch(`http://localhost:3000/api/todos/`, {
             method: "DELETE",
-            signal: AbortSignal.timeout(8000),
+
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"
             },
             credentials: "include",
         })
-        if (!res.ok) throw new Error('Failed to delete all todos');
+        if (!res.ok) return { status: "failed", message: "Failed to delete all todos!" }
         revalidateTag('todos')
+        return { status: "success", message: "All Todos has been deleted successfully!" }
     } catch (error) {
-        console.error("Failed to delete all todos:", error);
-        throw error;
+        return { status: "failed", message: "Failed to delete all todos!" }
     }
 }
 
-export async function updateTodo(id: string, payload: Prisma.TodoUpdateInput): Promise<Todo> {
+export async function updateTodo(id: string, payload: Prisma.TodoUpdateInput): Promise<Callback> {
     try {
         const c = cookies()
         const res = await fetch(`http://localhost:3000/api/todos/${id}`, {
             method: "PATCH",
-            signal: AbortSignal.timeout(8000),
             headers: {
                 Cookie: c.toString(),
                 "Content-Type": "application/json"
@@ -96,12 +107,12 @@ export async function updateTodo(id: string, payload: Prisma.TodoUpdateInput): P
             body: JSON.stringify(payload),
             credentials: "include",
         })
-        if (!res.ok) throw new Error('Failed to update todo');
+
+        if (!res.ok) return { status: "failed", message: "Failed to update todo!" }
         revalidateTag('todos')
         const { data } = await res.json()
-        return data
+        return { status: "success", message: "The todo has been added successfully!", data }
     } catch (error) {
-        console.error("Failed to update todo:", error);
-        throw error;
+        return { status: "failed", message: "Failed to update todo!" }
     }
 }

@@ -18,6 +18,7 @@ import { Modal } from "./Modal";
 import { AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 import { useOnClickOutside } from "@/hooks/utils/useOnClickOutside";
+import { toast } from "sonner";
 
 const Todos = ({ todos }: { todos: Todo[] }) => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -27,14 +28,24 @@ const Todos = ({ todos }: { todos: Todo[] }) => {
     setOpened(false);
   });
   return (
-    <div className="flex flex-col gap-2  md:!w-[80vw] lg:w-[40vw] w-[25vw]">
+    <div className="flex flex-col gap-2  w-[40vw] md:!w-[70vw]">
       <h3>Enter Task</h3>
 
       <form
         ref={formRef}
         action={async (formData: FormData) => {
           formRef.current?.reset();
-          await addTodo(formData);
+          const promise = new Promise<string>(async (resolve, reject) =>
+            addTodo(formData)
+              .then((data) => resolve(data.message))
+              .catch((err: Error) => reject(err.message))
+          );
+
+          toast.promise(promise, {
+            loading: "Adding Todo ...",
+            success: (message) => message,
+            error: (error) => error,
+          });
         }}
         className="flex flex-col gap-1"
       >
@@ -56,7 +67,7 @@ const Todos = ({ todos }: { todos: Todo[] }) => {
         Delete All
       </Button>
 
-      <ul className="flex flex-col gap-1 max-h-56 overflow-y-auto">
+      <ul className="flex flex-col gap-1 max-h-56 overflow-y-auto overflow-x-hidden">
         {todos?.length > 0 ? (
           todos?.map((todo, i) => <TodoComponent key={i} {...todo} />)
         ) : (
@@ -77,7 +88,7 @@ const TodoButton = () => {
   const { pending } = useFormStatus();
   return (
     <Button disabled={pending} type="submit">
-      {pending ? "Adding Todo..." : "Add Todo"}
+      {pending ? <Loader2 className="animate-spin" /> : "Add Todo"}
     </Button>
   );
 };

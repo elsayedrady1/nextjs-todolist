@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import { ProgressBar } from "@/components/ProgressBar";
 import { Navbar } from "@/components/Navbar";
+import { Toaster } from "@/components/Toaster";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,6 +25,7 @@ export default async function RootLayout({
       <body className={poppins.className}>
         <Navbar />
         <ProgressBar />
+        <Toaster position="bottom-right" />
         <main className="w-screen h-screen flex justify-center px-10">
           {children}
         </main>
