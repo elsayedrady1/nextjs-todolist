@@ -3,6 +3,7 @@
 import { Todo, Prisma } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 export type Callback =
     ({
         status: "success";
@@ -108,10 +109,17 @@ export async function updateTodo(id: string, payload: Prisma.TodoUpdateInput): P
             credentials: "include",
         })
 
-        if (!res.ok) return { status: "failed", message: "Failed to update todo!" }
+        if (!res.ok) return {
+            status: "failed",
+            message: "Failed to update todo!"
+        }
+
         revalidateTag('todos')
+
         const { data } = await res.json()
+
         return { status: "success", message: "The todo has been added successfully!", data }
+
     } catch (error) {
         return { status: "failed", message: "Failed to update todo!" }
     }

@@ -17,11 +17,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
     try {
-        const { todo }: { todo: string } = await request.json()
         const sessionId = request.cookies.get('sessionId')?.value
         if (!sessionId) {
             return NextResponse.json({ message: "Invalid Session provided." }, { status: 400 })
         }
+        const { todo }: { todo: string } = await request.json()
 
         const todoData = await prisma.todo.create({
             data: {
@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
     const sessionId = request.cookies.get('sessionId')?.value
-    
+
     if (!sessionId) {
         return NextResponse.json({ message: "Invalid Session provided." }, { status: 400 })
     }
