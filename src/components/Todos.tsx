@@ -6,6 +6,7 @@ import {
   ComponentPropsWithRef,
   FC,
   forwardRef,
+  useOptimistic,
   useRef,
   useState,
   useTransition,
@@ -24,9 +25,11 @@ const Todos = ({ todos }: { todos: Todo[] }) => {
   const formRef = useRef<HTMLFormElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [opened, setOpened] = useState(false);
+ 
   useOnClickOutside([modalRef], () => {
     setOpened(false);
   });
+
   return (
     <div className="flex flex-col gap-2  w-[40vw] md:!w-[70vw]">
       <h3>Enter Task</h3>

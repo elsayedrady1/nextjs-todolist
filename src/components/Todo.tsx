@@ -4,6 +4,8 @@ import React, {
   ComponentPropsWithRef,
   FC,
   forwardRef,
+  useEffect,
+  useOptimistic,
   useRef,
   useState,
   useTransition,
@@ -18,38 +20,64 @@ import { AnimatePresence } from "framer-motion";
 import { Input } from "./ui/input";
 import { useOnClickOutside } from "@/hooks/utils/useOnClickOutside";
 import { Modal } from "./Modal";
-const Todo = ({ name, id, updatedAt, checked }: ITodo) => {
-  const date = new Date(updatedAt);
+const Todo = (todo: ITodo) => {
+  const [opened, setOpened] = useState(false);
   const [deletePending, startDeleting] = useTransition();
+  const [checkPending, startChecking] = useTransition();
   const ref = useRef(null);
+
+  const [optimisticTodo, checkTodo] = useOptimistic(
+    todo,
+    (todo, checked: boolean) => {
+      return { ...todo, checked };
+    }
+  );
+
   useOnClickOutside([ref], () => {
     setOpened(false);
   });
-  const [opened, setOpened] = useState(false);
+
+  async function handleCheck(checked: boolean) {
+    checkTodo(checked);
+    await updateTodo(optimisticTodo.id, {
+      checked,
+    });
+  }
+  async function handleDelete() {
+    await deleteTodo(optimisticTodo.id);
+  }
+  const date = new Date(optimisticTodo.updatedAt);
+
   return (
     <div className="p-3.5 rounded-md flex justify-between border-black border border-opacity-10 w-full">
       <div className="flex items-center gap-3 w-full">
         <Checkbox
+          disabled={checkPending}
           className="h-5 w-5"
-          checked={checked}
-          onClick={async () => {
-            await updateTodo(id, { checked: !checked });
-          }}
+          checked={optimisticTodo.checked}
+          onCheckedChange={(checked) =>
+            startChecking(async () => await handleCheck(checked as boolean))
+          }
         />
 
         <div className="flex flex-col gap-1 text-sm md:!max-w-[30vw] !max-w-[20vw]">
-          <span className="text-start break-words">{name}</span>
+          <span
+            className="text-start break-words data-[checked=true]:line-through data-[checked=true]:text-opacity-70 text-black"
+            data-checked={optimisticTodo.checked}
+          >
+            {optimisticTodo.name}
+          </span>
           <span>{date.toLocaleString()}</span>
         </div>
       </div>
       <div className="flex justify-center items-center gap-2">
         <Button
           variant="destructive"
-          onClick={() => {
+          onClick={() =>
             startDeleting(async () => {
-              await deleteTodo(id);
-            });
-          }}
+              await deleteTodo(optimisticTodo.id);
+            })
+          }
           disabled={deletePending}
         >
           {deletePending ? (
@@ -67,8 +95,8 @@ const Todo = ({ name, id, updatedAt, checked }: ITodo) => {
         {opened && (
           <EditModal
             ref={ref}
-            todo={name}
-            id={id}
+            todo={optimisticTodo.name}
+            id={optimisticTodo.id}
             opened={opened}
             setOpened={setOpened}
           />
